@@ -1,35 +1,32 @@
 const DEFAULT_STATE = {
-  actualRent: 2169.17,
+  actualRent: '',
   projectionMonths: 12,
   persons: [
     {
       name: 'Person 1',
       payPeriod: 'Semimonthly',
-      paycheckCount: 5,
-      paychecks: [2342.97, 2342.97, 2342.97, 2342.97, 2342.97],
-      bills: [130.0, 228.0, 45.0, 16.0, 6.37, 21.26, 10.0],
-      groceries: 400,
-      gas: 120,
+      paycheckCount: 2,
+      paychecks: [],
+      bills: [],
+      groceries: 0,
+      gas: 0,
       savingsRate: 20,
       wantsRate: 20,
-      startingDebt: 1765.01,
-      startingSavings: 515.62,
+      startingDebt: 0,
+      startingSavings: 0,
     },
     {
       name: 'Person 2',
       payPeriod: 'Weekly',
-      paycheckCount: 12,
-      paychecks: [
-        421.98, 473.98, 599.3, 826.44, 624.78, 873.6, 451.88, 682.76, 475.8,
-        730.08, 835.24, 759.2,
-      ],
-      bills: [59.44, 150.0, 20.0, 16.0],
-      groceries: 400,
-      gas: 120,
+      paycheckCount: 2,
+      paychecks: [],
+      bills: [],
+      groceries: 0,
+      gas: 0,
       savingsRate: 20,
       wantsRate: 20,
-      startingDebt: 5000,
-      startingSavings: 11057.34,
+      startingDebt: 0,
+      startingSavings: 0,
     },
   ],
 };
@@ -52,10 +49,18 @@ function buildPersonSections(persons) {
     section.dataset.index = index;
 
     section.innerHTML = `
-      <h2>
-        <span>${person.name}</span>
-        <small class="hint">Provide income, bill, and goal details.</small>
-      </h2>
+      <div class="person-heading">
+        <label class="name-field">
+          <span>Name</span>
+          <input
+            type="text"
+            class="person-name"
+            placeholder="e.g. Alex"
+            value="${person.name ?? ''}"
+          />
+        </label>
+        <p class="hint">Add the most recent information to keep the averages accurate.</p>
+      </div>
       <div class="person-grid">
         <div class="field">
           <span>Pay Period</span>
@@ -64,26 +69,32 @@ function buildPersonSections(persons) {
             <option value="Weekly">Weekly</option>
             <option value="Biweekly">Biweekly</option>
           </select>
+          <span class="field-note">How often this person is paid.</span>
         </div>
         <div class="field">
           <span>Number of Paychecks</span>
           <select class="paycheck-count"></select>
+          <span class="field-note">Choose how many recent paychecks to average.</span>
         </div>
-        <div class="field">
+        <div class="field field--stacked">
           <span>Paycheck Amounts</span>
           <div class="paycheck-list"></div>
+          <span class="field-note">Enter the gross amount of each paycheck selected above.</span>
         </div>
-        <div class="field">
+        <div class="field field--stacked">
           <span>Monthly Bills</span>
           <textarea class="bills" placeholder="One amount per line"></textarea>
+          <span class="field-note">List recurring bills this person pays individually.</span>
         </div>
         <div class="field">
           <span>Groceries (monthly)</span>
-          <input type="number" class="groceries" min="0" step="0.01" />
+          <input type="number" class="groceries" min="0" step="0.01" placeholder="0" />
+          <span class="field-note">Average amount this person spends on groceries.</span>
         </div>
         <div class="field">
           <span>Gas &amp; Transportation (monthly)</span>
-          <input type="number" class="gas" min="0" step="0.01" />
+          <input type="number" class="gas" min="0" step="0.01" placeholder="0" />
+          <span class="field-note">Fuel, transit passes, ride shares, and similar.</span>
         </div>
         <div class="field slider-wrapper">
           <label for="savings-${index}">
@@ -99,6 +110,7 @@ function buildPersonSections(persons) {
             step="1"
             data-display="savings-value-${index}"
           />
+          <span class="field-note">Aim for at least 20% if you can.</span>
         </div>
         <div class="field slider-wrapper">
           <label for="wants-${index}">
@@ -114,14 +126,17 @@ function buildPersonSections(persons) {
             step="1"
             data-display="wants-value-${index}"
           />
+          <span class="field-note">Dining out, hobbies, fun money, etc.</span>
         </div>
         <div class="field">
           <span>Starting Debt Balance</span>
-          <input type="number" class="starting-debt" min="0" step="0.01" />
+          <input type="number" class="starting-debt" min="0" step="0.01" placeholder="0" />
+          <span class="field-note">Balances you want to pay down faster.</span>
         </div>
         <div class="field">
           <span>Starting Savings Balance</span>
-          <input type="number" class="starting-savings" min="0" step="0.01" />
+          <input type="number" class="starting-savings" min="0" step="0.01" placeholder="0" />
+          <span class="field-note">Emergency fund or other cash already saved.</span>
         </div>
       </div>
     `;
@@ -188,6 +203,9 @@ function renderPaycheckInputs(section, count, values = []) {
     input.min = '0';
     input.step = '0.01';
     input.className = 'paycheck-amount';
+    input.placeholder = '0.00';
+    input.inputMode = 'decimal';
+    input.setAttribute('aria-label', `Paycheck ${i + 1} amount`);
     const label = document.createElement('span');
     label.textContent = `#${i + 1}`;
 
@@ -220,12 +238,8 @@ function bindGlobalInputs() {
   const actualRentInput = document.getElementById('actual-rent');
   const projectionMonthsInput = document.getElementById('projection-months');
 
-  if (DEFAULT_STATE.actualRent) {
-    actualRentInput.value = DEFAULT_STATE.actualRent;
-  }
-  if (DEFAULT_STATE.projectionMonths) {
-    projectionMonthsInput.value = DEFAULT_STATE.projectionMonths;
-  }
+  actualRentInput.value = DEFAULT_STATE.actualRent ?? '';
+  projectionMonthsInput.value = DEFAULT_STATE.projectionMonths ?? 12;
 
   actualRentInput.addEventListener('input', updateAll);
   projectionMonthsInput.addEventListener('input', updateAll);
@@ -242,6 +256,7 @@ function updateAll() {
   const persons = personSections.map((section) => collectPersonData(section));
 
   const calculations = computeBudget(persons, actualRent, projectionMonths);
+  updatePersonLabels(calculations.persons);
   renderRentSummary(calculations);
   renderBudgetTables(calculations);
   renderFiftyThirtyTwenty(calculations);
@@ -249,7 +264,43 @@ function updateAll() {
   renderCharts(calculations);
 }
 
+function updatePersonLabels(persons) {
+  const displayNames = persons.map((person, index) => {
+    const trimmed = (person.name || '').trim();
+    return trimmed || `Person ${index + 1}`;
+  });
+
+  document.querySelectorAll('[data-person-column]').forEach((cell) => {
+    const index = Number(cell.dataset.personColumn);
+    cell.textContent = displayNames[index] ?? `Person ${index + 1}`;
+  });
+
+  document.querySelectorAll('[data-person-ratio]').forEach((cell) => {
+    const index = Number(cell.dataset.personRatio);
+    const template = cell.dataset.headingTemplate || '{{name}}';
+    const name = displayNames[index] ?? `Person ${index + 1}`;
+    cell.textContent = template.replace(/\{\{name\}\}/g, name);
+  });
+
+  document.querySelectorAll('[data-person-heading]').forEach((heading) => {
+    const index = Number(heading.dataset.personHeading);
+    const template = heading.dataset.headingTemplate || '{{name}}';
+    const name = displayNames[index] ?? `Person ${index + 1}`;
+    heading.textContent = template.replace(/\{\{name\}\}/g, name);
+  });
+
+  document.querySelectorAll('canvas[data-person-index]').forEach((canvas) => {
+    const index = Number(canvas.dataset.personIndex);
+    const template = canvas.dataset.ariaTemplate || '{{name}}';
+    const name = displayNames[index] ?? `Person ${index + 1}`;
+    canvas.setAttribute('aria-label', template.replace(/\{\{name\}\}/g, name));
+  });
+}
+
 function collectPersonData(section) {
+  const index = Number(section.dataset.index) || 0;
+  const nameInput = section.querySelector('.person-name');
+  const name = nameInput.value.trim() || `Person ${index + 1}`;
   const payPeriod = section.querySelector('.pay-period').value;
   const paychecks = getPaychecks(section);
   const bills = parseNumberList(section.querySelector('.bills').value);
@@ -261,7 +312,7 @@ function collectPersonData(section) {
   const startingSavings = getNumber(section.querySelector('.starting-savings').value);
 
   return {
-    name: section.querySelector('h2 span').textContent.trim(),
+    name,
     payPeriod,
     paychecks,
     bills,
@@ -416,6 +467,16 @@ function renderRentSummary({ persons, actualRent, affordability, fairShares, hal
   const tbody = document.getElementById('rent-summary-body');
   tbody.innerHTML = '';
 
+  const message = document.getElementById('affordability-message');
+  const hasRent = Number.isFinite(actualRent) && actualRent > 0;
+  const hasIncome = persons.some((person) => Number.isFinite(person.monthlyIncome) && person.monthlyIncome > 0);
+
+  if (!hasRent) {
+    message.textContent = 'Enter your household rent to see recommended splits.';
+    message.className = 'status info';
+    return;
+  }
+
   const categories = [
     {
       label: 'Average Paycheck',
@@ -463,7 +524,12 @@ function renderRentSummary({ persons, actualRent, affordability, fairShares, hal
     tbody.appendChild(row);
   });
 
-  const message = document.getElementById('affordability-message');
+  if (!hasIncome) {
+    message.textContent = 'Add at least one paycheck amount to calculate a fair split.';
+    message.className = 'status info';
+    return;
+  }
+
   message.textContent = affordability
     ? 'Great! The rent fits comfortably within the 30% guideline based on your incomes.'
     : 'Caution: The rent exceeds the 30% of income guideline. Consider adjustments to stay on track.';
@@ -590,14 +656,15 @@ function renderFiftyThirtyTwenty({ persons }) {
 }
 
 function renderSavingsInsights({ persons, projectionMonths }) {
-  const summaries = [
-    document.getElementById('person1-savings-summary'),
-    document.getElementById('person2-savings-summary'),
-  ];
+  const summaries = Array.from(document.querySelectorAll('[data-person-summary]'));
+
+  summaries.forEach((summary) => {
+    summary.innerHTML = '';
+  });
 
   persons.forEach((person, index) => {
     const summary = summaries[index];
-    summary.innerHTML = '';
+    if (!summary) return;
 
     const items = [
       `Monthly savings allocation: ${toCurrency(person.savings)} (${toPercent(person.percentages.savings)})`,

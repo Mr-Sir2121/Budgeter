@@ -18,25 +18,46 @@
     <header class="page-header">
       <div class="container">
         <h1>Household Budget Planner</h1>
-        <p>Create a fair, transparent plan for shared expenses, savings, and debt payoff.</p>
+        <p class="tagline">
+          Enter real numbers for you and your housemate or partner to instantly see fair rent
+          splits, savings progress, and debt payoff timelines.
+        </p>
       </div>
     </header>
 
     <main class="container">
       <section class="card" id="setup">
         <h2>Household Setup</h2>
+        <p class="card-note">
+          Start with your shared rent and how far out you want to project savings. You can adjust
+          anything later—every box updates in real time.
+        </p>
         <div class="grid">
           <label class="field">
             <span>Actual Monthly Rent</span>
-            <input type="number" id="actual-rent" min="0" step="0.01" value="2169.17" />
+            <input
+              type="number"
+              id="actual-rent"
+              min="0"
+              step="0.01"
+              placeholder="e.g. 2100"
+            />
+            <span class="field-note">Use the full rent amount before any split.</span>
           </label>
           <label class="field">
             <span>Projection Length (months)</span>
-            <input type="number" id="projection-months" min="1" max="60" value="12" />
+            <input
+              type="number"
+              id="projection-months"
+              min="1"
+              max="60"
+              value="12"
+            />
+            <span class="field-note">How many months to chart savings growth.</span>
           </label>
         </div>
         <p class="hint">
-          Add income, bills, and savings information for each person below. All figures are in USD.
+          Next, add income, bills, and goals for each person below. All figures are in USD.
         </p>
       </section>
 
@@ -44,13 +65,14 @@
 
       <section class="card" id="rent-summary">
         <h2>Rent Affordability &amp; Split</h2>
+        <p class="card-note">Compare the 30% of income guideline with an even split.</p>
         <div id="affordability-message" class="status"></div>
         <table>
           <thead>
             <tr>
               <th scope="col">Category</th>
-              <th scope="col">Person 1</th>
-              <th scope="col">Person 2</th>
+              <th scope="col" data-person-column="0">Person 1</th>
+              <th scope="col" data-person-column="1">Person 2</th>
             </tr>
           </thead>
           <tbody id="rent-summary-body"></tbody>
@@ -59,6 +81,7 @@
 
       <section class="card" id="budget-breakdown">
         <h2>Monthly Budget Breakdown</h2>
+        <p class="card-note">See the dollars and percentages that each person allocates every month.</p>
         <div class="grid grid-2">
           <div>
             <h3>Dollar Amounts</h3>
@@ -66,8 +89,8 @@
               <thead>
                 <tr>
                   <th scope="col">Category</th>
-                  <th scope="col">Person 1</th>
-                  <th scope="col">Person 2</th>
+                  <th scope="col" data-person-column="0">Person 1</th>
+                  <th scope="col" data-person-column="1">Person 2</th>
                 </tr>
               </thead>
               <tbody id="budget-breakdown-body"></tbody>
@@ -79,8 +102,8 @@
               <thead>
                 <tr>
                   <th scope="col">Category</th>
-                  <th scope="col">Person 1</th>
-                  <th scope="col">Person 2</th>
+                  <th scope="col" data-person-column="0">Person 1</th>
+                  <th scope="col" data-person-column="1">Person 2</th>
                 </tr>
               </thead>
               <tbody id="percentage-breakdown-body"></tbody>
@@ -91,13 +114,28 @@
 
       <section class="card" id="fifty-thirty-twenty">
         <h2>Needs / Wants / Savings Comparison</h2>
+        <p class="card-note">
+          The classic 50/30/20 rule is just a guideline. Use this to see how close you are.
+        </p>
         <table>
           <thead>
             <tr>
               <th scope="col">Category</th>
               <th scope="col">50/30/20 Guideline</th>
-              <th scope="col">Person 1 Actual</th>
-              <th scope="col">Person 2 Actual</th>
+              <th
+                scope="col"
+                data-person-ratio="0"
+                data-heading-template="{{name}} Actual"
+              >
+                Person 1 Actual
+              </th>
+              <th
+                scope="col"
+                data-person-ratio="1"
+                data-heading-template="{{name}} Actual"
+              >
+                Person 2 Actual
+              </th>
             </tr>
           </thead>
           <tbody id="fifty-table-body"></tbody>
@@ -106,39 +144,88 @@
 
       <section class="card" id="charts">
         <h2>Visual Breakdown</h2>
+        <p class="card-note">Charts highlight where money is going and how goals progress each month.</p>
         <div class="grid grid-2">
           <div class="chart-card">
-            <h3>Person 1 Budget</h3>
-            <canvas id="person1-budget-chart" aria-label="Person 1 budget breakdown" role="img"></canvas>
+            <h3 data-person-heading="0" data-heading-template="{{name}} Budget">Person 1 Budget</h3>
+            <canvas
+              id="person1-budget-chart"
+              data-person-index="0"
+              data-aria-template="{{name}} budget breakdown"
+              aria-label="Person 1 budget breakdown"
+              role="img"
+            ></canvas>
           </div>
           <div class="chart-card">
-            <h3>Person 2 Budget</h3>
-            <canvas id="person2-budget-chart" aria-label="Person 2 budget breakdown" role="img"></canvas>
+            <h3 data-person-heading="1" data-heading-template="{{name}} Budget">Person 2 Budget</h3>
+            <canvas
+              id="person2-budget-chart"
+              data-person-index="1"
+              data-aria-template="{{name}} budget breakdown"
+              aria-label="Person 2 budget breakdown"
+              role="img"
+            ></canvas>
           </div>
           <div class="chart-card">
-            <h3>Person 1 vs 50/30/20</h3>
-            <canvas id="person1-ratio-chart" aria-label="Person 1 percentages" role="img"></canvas>
+            <h3 data-person-heading="0" data-heading-template="{{name}} vs 50/30/20">Person 1 vs 50/30/20</h3>
+            <canvas
+              id="person1-ratio-chart"
+              data-person-index="0"
+              data-aria-template="{{name}} percentages"
+              aria-label="Person 1 percentages"
+              role="img"
+            ></canvas>
           </div>
           <div class="chart-card">
-            <h3>Person 2 vs 50/30/20</h3>
-            <canvas id="person2-ratio-chart" aria-label="Person 2 percentages" role="img"></canvas>
+            <h3 data-person-heading="1" data-heading-template="{{name}} vs 50/30/20">Person 2 vs 50/30/20</h3>
+            <canvas
+              id="person2-ratio-chart"
+              data-person-index="1"
+              data-aria-template="{{name}} percentages"
+              aria-label="Person 2 percentages"
+              role="img"
+            ></canvas>
           </div>
           <div class="chart-card">
-            <h3>Person 1 Savings Projection</h3>
-            <canvas id="person1-savings-chart" aria-label="Person 1 savings over time" role="img"></canvas>
+            <h3 data-person-heading="0" data-heading-template="{{name}} Savings Projection">Person 1 Savings Projection</h3>
+            <canvas
+              id="person1-savings-chart"
+              data-person-index="0"
+              data-aria-template="{{name}} savings over time"
+              aria-label="Person 1 savings over time"
+              role="img"
+            ></canvas>
           </div>
           <div class="chart-card">
-            <h3>Person 2 Savings Projection</h3>
-            <canvas id="person2-savings-chart" aria-label="Person 2 savings over time" role="img"></canvas>
+            <h3 data-person-heading="1" data-heading-template="{{name}} Savings Projection">Person 2 Savings Projection</h3>
+            <canvas
+              id="person2-savings-chart"
+              data-person-index="1"
+              data-aria-template="{{name}} savings over time"
+              aria-label="Person 2 savings over time"
+              role="img"
+            ></canvas>
           </div>
           <div class="chart-card" id="person1-debt-chart-card">
-            <h3>Person 1 Debt Payoff</h3>
-            <canvas id="person1-debt-chart" aria-label="Person 1 debt payoff timeline" role="img"></canvas>
+            <h3 data-person-heading="0" data-heading-template="{{name}} Debt Payoff">Person 1 Debt Payoff</h3>
+            <canvas
+              id="person1-debt-chart"
+              data-person-index="0"
+              data-aria-template="{{name}} debt payoff timeline"
+              aria-label="Person 1 debt payoff timeline"
+              role="img"
+            ></canvas>
             <p class="chart-message" id="person1-debt-message"></p>
           </div>
           <div class="chart-card" id="person2-debt-chart-card">
-            <h3>Person 2 Debt Payoff</h3>
-            <canvas id="person2-debt-chart" aria-label="Person 2 debt payoff timeline" role="img"></canvas>
+            <h3 data-person-heading="1" data-heading-template="{{name}} Debt Payoff">Person 2 Debt Payoff</h3>
+            <canvas
+              id="person2-debt-chart"
+              data-person-index="1"
+              data-aria-template="{{name}} debt payoff timeline"
+              aria-label="Person 2 debt payoff timeline"
+              role="img"
+            ></canvas>
             <p class="chart-message" id="person2-debt-message"></p>
           </div>
         </div>
@@ -146,14 +233,15 @@
 
       <section class="card" id="savings-debt">
         <h2>Savings &amp; Debt Insights</h2>
+        <p class="card-note">These summaries translate the numbers into quick takeaways.</p>
         <div class="grid">
           <div>
-            <h3>Person 1</h3>
-            <ul class="summary" id="person1-savings-summary"></ul>
+            <h3 data-person-heading="0" data-heading-template="{{name}} Summary">Person 1 Summary</h3>
+            <ul class="summary" data-person-summary="0"></ul>
           </div>
           <div>
-            <h3>Person 2</h3>
-            <ul class="summary" id="person2-savings-summary"></ul>
+            <h3 data-person-heading="1" data-heading-template="{{name}} Summary">Person 2 Summary</h3>
+            <ul class="summary" data-person-summary="1"></ul>
           </div>
         </div>
       </section>

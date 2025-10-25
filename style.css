@@ -61,6 +61,10 @@ p {
   margin: 0 auto;
 }
 
+.tagline {
+  opacity: 0.95;
+}
+
 .page-footer p {
   margin: 0;
 }
@@ -82,6 +86,15 @@ main {
   margin-bottom: 1.25rem;
 }
 
+.card-note {
+  background: rgba(99, 102, 241, 0.08);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  color: var(--accent-strong);
+  margin-bottom: 1.5rem;
+}
+
 .grid {
   display: grid;
   gap: 1rem;
@@ -97,6 +110,10 @@ main {
   gap: 0.5rem;
   font-weight: 500;
   color: var(--muted);
+}
+
+.field--stacked {
+  gap: 0.75rem;
 }
 
 .field input,
@@ -130,6 +147,11 @@ main {
   font-size: 0.95rem;
 }
 
+.field-note {
+  font-size: 0.85rem;
+  color: #5b65a0;
+}
+
 .section-title {
   font-size: 1.5rem;
   margin-bottom: 1rem;
@@ -143,11 +165,35 @@ main {
   margin-bottom: 1.75rem;
 }
 
-.person-card h2 {
+.person-heading {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.75rem;
+}
+
+.name-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+
+.name-field input {
+  font-size: 1.5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: #f0f4ff;
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+.name-field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(63, 81, 181, 0.18);
 }
 
 .person-grid {
@@ -202,13 +248,13 @@ main {
 }
 
 .status.warn {
-  background: rgba(239, 68, 68, 0.12);
-  color: #b91c1c;
+  background: rgba(244, 114, 182, 0.12);
+  color: #be185d;
 }
 
-.status.neutral {
-  background: rgba(107, 114, 128, 0.1);
-  color: var(--muted);
+.status.info {
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
 }
 
 table {
