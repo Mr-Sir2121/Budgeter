@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Budgeter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="container">
+        <h1>Household Budget Planner</h1>
+        <p>Create a fair, transparent plan for shared expenses, savings, and debt payoff.</p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card" id="setup">
+        <h2>Household Setup</h2>
+        <div class="grid">
+          <label class="field">
+            <span>Actual Monthly Rent</span>
+            <input type="number" id="actual-rent" min="0" step="0.01" value="2169.17" />
+          </label>
+          <label class="field">
+            <span>Projection Length (months)</span>
+            <input type="number" id="projection-months" min="1" max="60" value="12" />
+          </label>
+        </div>
+        <p class="hint">
+          Add income, bills, and savings information for each person below. All figures are in USD.
+        </p>
+      </section>
+
+      <section id="people"></section>
+
+      <section class="card" id="rent-summary">
+        <h2>Rent Affordability &amp; Split</h2>
+        <div id="affordability-message" class="status"></div>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">Person 1</th>
+              <th scope="col">Person 2</th>
+            </tr>
+          </thead>
+          <tbody id="rent-summary-body"></tbody>
+        </table>
+      </section>
+
+      <section class="card" id="budget-breakdown">
+        <h2>Monthly Budget Breakdown</h2>
+        <div class="grid grid-2">
+          <div>
+            <h3>Dollar Amounts</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Category</th>
+                  <th scope="col">Person 1</th>
+                  <th scope="col">Person 2</th>
+                </tr>
+              </thead>
+              <tbody id="budget-breakdown-body"></tbody>
+            </table>
+          </div>
+          <div>
+            <h3>Percentage of Monthly Income</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Category</th>
+                  <th scope="col">Person 1</th>
+                  <th scope="col">Person 2</th>
+                </tr>
+              </thead>
+              <tbody id="percentage-breakdown-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="fifty-thirty-twenty">
+        <h2>Needs / Wants / Savings Comparison</h2>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">50/30/20 Guideline</th>
+              <th scope="col">Person 1 Actual</th>
+              <th scope="col">Person 2 Actual</th>
+            </tr>
+          </thead>
+          <tbody id="fifty-table-body"></tbody>
+        </table>
+      </section>
+
+      <section class="card" id="charts">
+        <h2>Visual Breakdown</h2>
+        <div class="grid grid-2">
+          <div class="chart-card">
+            <h3>Person 1 Budget</h3>
+            <canvas id="person1-budget-chart" aria-label="Person 1 budget breakdown" role="img"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Person 2 Budget</h3>
+            <canvas id="person2-budget-chart" aria-label="Person 2 budget breakdown" role="img"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Person 1 vs 50/30/20</h3>
+            <canvas id="person1-ratio-chart" aria-label="Person 1 percentages" role="img"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Person 2 vs 50/30/20</h3>
+            <canvas id="person2-ratio-chart" aria-label="Person 2 percentages" role="img"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Person 1 Savings Projection</h3>
+            <canvas id="person1-savings-chart" aria-label="Person 1 savings over time" role="img"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Person 2 Savings Projection</h3>
+            <canvas id="person2-savings-chart" aria-label="Person 2 savings over time" role="img"></canvas>
+          </div>
+          <div class="chart-card" id="person1-debt-chart-card">
+            <h3>Person 1 Debt Payoff</h3>
+            <canvas id="person1-debt-chart" aria-label="Person 1 debt payoff timeline" role="img"></canvas>
+            <p class="chart-message" id="person1-debt-message"></p>
+          </div>
+          <div class="chart-card" id="person2-debt-chart-card">
+            <h3>Person 2 Debt Payoff</h3>
+            <canvas id="person2-debt-chart" aria-label="Person 2 debt payoff timeline" role="img"></canvas>
+            <p class="chart-message" id="person2-debt-message"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="savings-debt">
+        <h2>Savings &amp; Debt Insights</h2>
+        <div class="grid">
+          <div>
+            <h3>Person 1</h3>
+            <ul class="summary" id="person1-savings-summary"></ul>
+          </div>
+          <div>
+            <h3>Person 2</h3>
+            <ul class="summary" id="person2-savings-summary"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <div class="container">
+        <p>Built to make shared financial planning simple, transparent, and fair.</p>
+      </div>
+    </footer>
+  </body>
+</html>
